@@ -49,6 +49,8 @@ park_tree <-
 tr_nei <- st_join(trees, neighborhoods)
 
 
+
+
 # calculate number of trees in each neighborhood
 # neighborhoods <- 
 n_trees  <- 
