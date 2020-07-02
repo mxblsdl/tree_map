@@ -1,0 +1,41 @@
+
+```{r }
+# get data from ESRI server for tree map
+library(sf)
+library(dplyr)
+
+# load data ---------------------------
+
+# Street Tree Data
+trees <- read_sf('https://opendata.arcgis.com/datasets/eb67a0ad684d4bb6afda51dc065d1664_25.geojson')
+
+# Park tree data
+park_tree <- read_sf("https://opendata.arcgis.com/datasets/83a7e3f6a1d94db09f24849ee90f4be2_220.geojson")
+
+# neighborhoods
+neighborhoods <- read_sf("https://opendata.arcgis.com/datasets/1ef75e34b8504ab9b14bef0c26cade2c_3.geojson")
+
+# Clean Data -------------------------------------
+
+# drop unneeded columns and output in geopackage format
+
+# clean neighborhoods
+neighborhoods <-
+  neighborhoods %>% 
+  select(MAPLABEL) %>% 
+  st_simplify(dTolerance = 0.001)
+
+# clean street trees
+# this is the largest data set
+trees %>% 
+  select(Family, Genus, Common, DBH, Edible)
+```
+
+
+
+---
+title: getData.R
+author: max
+date: '2020-06-27'
+
+---
