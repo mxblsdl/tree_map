@@ -44,12 +44,11 @@ park_tree <-
 
 # Analysis
 
-# what am i trying to answer/show here?
 # which neighborhoods have the most trees per area?
-tr_nei <- st_intersection(trees, neighborhoods)
 
-tr_nei %>% 
-  filter(is.na(Neighborhood))
+tr_nei <- st_join(trees, neighborhoods)
+
+
 # calculate number of trees in each neighborhood
 # neighborhoods <- 
 n_trees  <- 
@@ -57,10 +56,6 @@ n_trees  <-
   group_by(MAPLABEL) %>% 
   summarise(n_trees = n()) %>% 
   as.data.frame()
-
-st_as_sf(n_trees) %>% 
-ggplot() +
-  geom_sf()
   
 # join n trees together
 neighborhoods <- left_join(neighborhoods, n_trees, by = "MAPLABEL")
