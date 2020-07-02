@@ -44,6 +44,8 @@ park_tree <-
 
 # Analysis
 
+
+# 1 -----------------------------------------------------------------------
 # which neighborhoods have the most trees per area?
 
 tr_nei <- st_join(trees, neighborhoods)
