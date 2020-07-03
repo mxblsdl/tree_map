@@ -1,8 +1,10 @@
 
 # get data from ESRI server for tree map
+library(units)
 library(sf)
 library(dplyr)
 library(ggplot2)
+library(tidyr)
 # load data ---------------------------
 
 # Street Tree Data
@@ -42,7 +44,7 @@ park_tree <-
   park_tree %>% 
   select(Family, Genus, Common_name, Total_Annual_Benefits, DBH, Edible, Native)
 
-# Analysis
+# Analysis -------------------------------------------------------------
 
 
 # 1 -----------------------------------------------------------------------
@@ -50,26 +52,34 @@ park_tree <-
 
 tr_nei <- st_join(trees, neighborhoods)
 
-
-
-
 # calculate number of trees in each neighborhood
 # neighborhoods <- 
 n_trees  <- 
   tr_nei %>% 
+  st_set_geometry(NULL) %>% 
   group_by(MAPLABEL) %>% 
-  summarise(n_trees = n()) %>% 
-  as.data.frame()
+  summarise(n_trees = n())
   
 # join n trees together
 neighborhoods <- left_join(neighborhoods, n_trees, by = "MAPLABEL")
 
 neighborhoods %>% 
-  mutate(trees_per_acre = st_area(.))
+  mutate(trees_per_acre = n_trees / st_area(.),
+         trees_per_acre = set_units(trees_per_acre, acre))
+
+
+# what neighborhoods have the most edible trees?
+tr_nei %>% 
+  st_set_geometry(NULL) %>% 
+  group_by(MAPLABEL, Edible) %>% 
+  summarise(n_fruit = n()) %>% 
+  filter(Edible != "no") %>% 
+  pivot_wider(values_from = "n_fruit", names_from = "Edible") %>% 
+  
 
 
 # what are the most valauble parks? Both in gross value and per acre?
-# what neighborhoods have the most edible trees?
+
 # parks with the msot edible/native trees?
 
 
