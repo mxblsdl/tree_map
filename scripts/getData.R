@@ -75,7 +75,7 @@ tr_nei %>%
   summarise(n_fruit = n()) %>% 
   filter(Edible != "no") %>% 
   pivot_wider(values_from = "n_fruit", names_from = "Edible") %>% 
-  
+  right_join(., neighborhoods, by = "MAPLABEL")
 
 
 # what are the most valauble parks? Both in gross value and per acre?
