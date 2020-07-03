@@ -78,6 +78,7 @@ tr_nei %>%
   right_join(., neighborhoods, by = "MAPLABEL")
 
 
+
 # what are the most valauble parks? Both in gross value and per acre?
 
 # parks with the msot edible/native trees?
