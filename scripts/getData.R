@@ -46,30 +46,23 @@ park_tree <-
 
 # Analysis -------------------------------------------------------------
 
-
-# 1 -----------------------------------------------------------------------
+## Neighborhoods -----------------------------------------------------------------------
 # which neighborhoods have the most trees per area?
-
 tr_nei <- st_join(trees, neighborhoods)
 
 # calculate number of trees in each neighborhood
-# neighborhoods <- 
-n_trees  <- 
+neighborhoods <- 
   tr_nei %>% 
   st_set_geometry(NULL) %>% 
   group_by(MAPLABEL) %>% 
-  summarise(n_trees = n())
-  
-# join n trees together
-neighborhoods <- left_join(neighborhoods, n_trees, by = "MAPLABEL")
-
-neighborhoods %>% 
+  summarise(n_trees = n()) %>% 
+  left_join(neighborhoods, ., by = "MAPLABEL") %>% 
   mutate(trees_per_acre = n_trees / st_area(.),
          trees_per_acre = set_units(trees_per_acre, acre))
 
-
 # what neighborhoods have the most edible trees?
-tr_nei %>% 
+neighborhoods <- 
+  tr_nei %>% 
   st_set_geometry(NULL) %>% 
   group_by(MAPLABEL, Edible) %>% 
   summarise(n_fruit = n()) %>% 
@@ -78,16 +71,40 @@ tr_nei %>%
   right_join(., neighborhoods, by = "MAPLABEL")
 
 
+# Parks -------------------------------------------------------------------
 
-# what are the most valauble parks? Both in gross value and per acre?
+# what are the most valuable parks? Both in gross value and per acre?
+tr_par <- st_join(parks, park_tree)
 
-# parks with the msot edible/native trees?
+parks <- 
+  tr_par %>% 
+  st_set_geometry(NULL) %>% 
+  group_by(NAME) %>% 
+  summarise(val = sum(Total_Annual_Benefits, na.rm = T)) %>% 
+  left_join(parks, ., by = "NAME") %>% 
+  mutate(val_per_acre = val / ACRES)
 
+# parks with the most edible/native trees?
+parks <- 
+  tr_par %>% 
+  st_set_geometry(NULL) %>% 
+  group_by(NAME, Edible) %>% 
+  summarise(n_fruit = n()) %>% 
+  filter(Edible != "No", Edible != "Yes") %>% 
+  pivot_wider(values_from = "n_fruit", names_from = "Edible") %>% 
+  right_join(., parks, by = "NAME")
 
-
+# convert back to sf
+parks <- st_as_sf(parks)
+neighborhoods <- st_as_sf(neighborhoods)
 
 # Output Data -------------------------------------------------------------
 
-write_sf()
+if!(dir.exists("dat")) {
+  dir.create("dat")
+}
 
+# write to geopackage database
+write_sf(parks, "dat/data.gpkg", layer = "park")
+write_sf(neighborhoods, "dat/data.gpkg", layer = "neigh")
 
