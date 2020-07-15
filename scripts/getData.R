@@ -7,6 +7,9 @@ library(ggplot2)
 library(tidyr)
 # load data ---------------------------
 
+# City Boundary
+portland <- read_sf("https://opendata.arcgis.com/datasets/1559e31273654eb9858397861f1fdefa_10.geojson")
+
 # Street Tree Data
 trees <- read_sf('https://opendata.arcgis.com/datasets/eb67a0ad684d4bb6afda51dc065d1664_25.geojson')
 
@@ -20,6 +23,11 @@ neighborhoods <- read_sf("https://opendata.arcgis.com/datasets/1ef75e34b8504ab9b
 parks <- read_sf("https://opendata.arcgis.com/datasets/9eef54196eaa4d12b54e9bc40e70ff09_35.geojson")
 
 # Clean Data -------------------------------------
+
+# Select Portland from Boundaries
+portland <- portland %>% 
+  filter(CITYNAME == "Portland") %>% 
+  select(CITYNAME)
 
 # drop unneeded columns and output in geopackage format
 
@@ -107,4 +115,8 @@ if!(dir.exists("dat")) {
 # write to geopackage database
 write_sf(parks, "dat/data.gpkg", layer = "park")
 write_sf(neighborhoods, "dat/data.gpkg", layer = "neigh")
+write_sf(portland, "dat/data.gpkg", layer = "portland")
+
+# write indiv trees
+write_sf(park_tree, "dat/data.gpkg", layer = "park_trees")
 
