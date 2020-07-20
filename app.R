@@ -5,14 +5,18 @@ library(leaflet)
 library(shiny)
 library(sf)
 library(shinyBS)
+library(shinyWidgets)
+library(shinyjs)
 
+source("app/globals.R")
+source("app/ui.R")
+source("app/server.R")
 #Other info
-options(shiny.autoreload = TRUE) # allows interactive development
+#options(shiny.autoreload = TRUE) # allows interactive development
 # ???
 
 # run shiny app
-
-runApp("app")
+shinyApp(ui = ui, server = server())
 
 #rstudioapi::jobRunScript("app.R", workingDir = getwd())
 
