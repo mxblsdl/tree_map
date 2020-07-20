@@ -19,22 +19,34 @@ server <- function(input, output, session) {
                          lng2 = -122.8,
                          lat2 = 45.67
             ) %>%
-            leafem::addMouseCoordinates()
+            leafem::addMouseCoordinates() %>% 
+            addControl(actionButton("map-change", label = "", icon = icon("bars"), class = "leaf-extend"), position = "topleft")
     })
     
     # update UI element
     output$map <- renderLeaflet(leaf_map())
     
-    # pop ups
-#    pop <- park$NAME
-    
     # add parks after basemap loads
     leafletProxy("map") %>% 
         addPolygons(data = park, 
-                    popup = paste0(park$NAME, "<br>Acres: ", park$ACRES),
+                    popup = paste0(park$NAME, "<br>Acres: ", round(park$ACRES, 1)),
                     options = popupOptions(className = "popup", 
                                         autoPan = T,
-                                        zoomAnimation = T))
+                                        zoomAnimation = T),
+                    color = "#548B54",
+                    group = "Parks") %>% 
+        addPolygons(data = neigh,
+                    popup = paste0(neigh$MAPLABEL),
+                    options = popupOptions(className = "popup", 
+                                           autoPan = T,
+                                           zoomAnimation = T),
+                    group = "Neighborhoods") %>% 
+        addLayersControl(
+            overlayGroups = c("Parks", "Neighborhoods"), 
+            position = "topleft",
+            options = layersControlOptions(collapsed = T)
+        ) %>% 
+        hideGroup("Neighborhoods")
     
     # get subset of neighborhood
     # sub_neigh <- reactive({
@@ -44,11 +56,8 @@ server <- function(input, output, session) {
     # call event on button press
     observeEvent(input$flyto, {
 
-        # TODO event is pressing the button
-        n <- input$neighborhoods
-
         # get subset of neighborhood
-        sub_neigh <- subset(neigh, MAPLABEL == n)
+        sub_neigh <- subset(neigh, MAPLABEL == input$neighborhoods)
 
         # get bounds
         bounds <- st_bbox(sub_neigh)
@@ -77,7 +86,7 @@ server <- function(input, output, session) {
                         lat2 = port_bound[[4]], options = list(easeLinearity = .1))
     })
     
-    
+
     # Load Spatial Data with Promise-------------------------------------------------------
     
     # load park trees with future
@@ -94,11 +103,16 @@ server <- function(input, output, session) {
     #     ggplot2::geom_sf
     
     # City boundary
-    leafletProxy("map") %>% 
-        addPolygons(data = portland, fillOpacity = 0, color = c("#EEAEEE"))
+    # leafletProxy("map") %>% 
+    #     addPolygons(data = portland, fillOpacity = 0, color = c("#EEAEEE"))
     
+    # observe more button on map
+    observeEvent(input$`map-change`, {
+        toggleClass("map-wrapper", "change-map")
+        toggleCssClass("hidden-panel", "hidden")
+        #toggle(id = "hidden-panel", anim = T, animType = "fade", time = .5)
+        }
+    )
     
-    # Add toggle functionality
-    # TODO observe matierla input toggle
     
 } # end of server
