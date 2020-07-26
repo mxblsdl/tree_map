@@ -1,8 +1,4 @@
 
-library(leaflet)
-library(future)
-library(promises)
-library(shinyWidgets)
 
 # Define server logic required to draw a histogram
 server <- function(input, output, session) {

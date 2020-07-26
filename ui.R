@@ -2,13 +2,20 @@
 # tree map app for Portland
 ### Author: Max Blasdel
 ### Contact: maxblasdel@gmail.com
+library(leaflet)
+library(shiny)
+library(sf)
+library(shinyjs)
+library(future)
+library(promises)
+library(shinyWidgets)
 
 # define user interface
 ui <- shinyUI(
     bootstrapPage(
         tags$head(
             # TODO move to sep CSS file
-            tags$style(includeCSS("../styles.css")),
+            tags$style(includeCSS("styles.css")),
             useShinyjs()
             ),
         
