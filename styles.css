@@ -4,14 +4,8 @@ body {
   height: 100%;
 }
 #controls-panel {
-  background-color: #EEE8CD;
+  background-color: #000000;
   opacity: 0.9;
-}
-/*#map {
-  height: calc(100vh);
-}*/
-.btn-fly {
-  text-align:center;
 }
 
 .leaf-extend {
@@ -27,7 +21,10 @@ body {
   padding:4px;
 }
 
-.hidden {
-  width: 0;
-  height: 0;
+#t {
+  padding: 12px;
+}
+
+.card-title {
+  font-size: 20px;
 }

@@ -9,66 +9,56 @@ library(shinyjs)
 library(future)
 library(promises)
 library(shinyWidgets)
+library(shinymaterial)
 
 # define user interface
-ui <- shinyUI(
-    bootstrapPage(
+ui <-
+    material_page(
         tags$head(
             # TODO move to sep CSS file
             tags$style(includeCSS("styles.css")),
             useShinyjs()
+        ),
+        title = "Portland Urban Forestry",
+        material_side_nav(
+            fixed = T,
+            material_row(
+                material_dropdown("parks", 
+                                  "Parks",
+                                  choices = c("Please Select Park", sort(park_names)), selected = "Please Select Park"
+                ),
+                actionButton("flyPark", "", icon = icon("plane")),
+                width = 12
             ),
-        
-        # Leaflet Map -------------------------------------------------------------
-        # hidden()
-        # side panel that shows with button press
-            div(id = "hidden-panel", class = "hidden", "some info", style = "display:inline-flex;"),
-            div(id = "map-wrapper",
-                leafletOutput("map", width = "100%", height = "100vh"), # redundant but want to remember height can be set in body
+            div(class = "divider"),
+            material_row(
+                material_dropdown("neigh", 
+                                  "Neighborhoods",
+                                  choices = c("Please Select Neighborhood", sort(neigh_names)), selected = "Please Select Park"
+                ),
+                actionButton("flyNeigh", "", icon = icon("plane")),
+                width = 12
+            ),
+            # Input values ------------------------------------------------------------
+            material_row(
+                material_column(width = 6,offset = 6,
+                    actionButton("flyHome", "Full View", icon = icon("map"))
+                )
+             ),
         ),
         
-        # TODO maybe change this   
-        absolutePanel(width = 300, top = 10, right = 20,
-                      titlePanel("Portland Urban Forestry", windowTitle = "Trees of Portland"),
-                      
-                      # Input values ------------------------------------------------------------
-                      
-                      sidebarPanel(id = "controls-panel",
-                                   width = 14,
-                                   selectizeInput("parks", "Parks",
-                                               choices = park_names,
-                                               options = list(
-                                                   placeholder = 'Search For a Park',
-                                                   onInitialize = I('function() { this.setValue(""); }')
-                                               ),
-                                               width = '100%'),
-                                   
-                                       selectizeInput("neighborhoods","Portland Neighborhoods",
-                                                      choices = neigh_names,
-                                                      options = list(
-                                                          placeholder = 'Select Neighborhood',
-                                                          onInitialize = I('function() { this.setValue(""); }')
-                                                      )
-                                       ),
-                                   div(class = "btn-fly",
-                                     actionButton("flyto", "Fly To Location", icon = icon("play-circle"))
-                                       ),
-                                   div(class = "btn-fly",
-                                        actionButton("flyHome", "Full View", icon = icon("map"))
-                                        ),
-                                   
-                                   #  toggle abandon in favor of leaflet controls group
-                                   # materialSwitch("park-show",
-                                   #                label = "Parks",
-                                   #                value = F, 
-                                   #                inline = T,
-                                   #                status = "info"),
-                                   # materialSwitch(inputId = "neigh-show",
-                                   #                label = "Neighborhoods",
-                                   #                value = F,
-                                   #                inline = T,
-                                   #                status = "info")
-                      ) # end side bar panel
-        )
-    )
+        # Leaflet Map -------------------------------------------------------------
+        
+        # height needs to be set to view window height
+        leafletOutput("map", width = "100%", height = "100vh"), 
+        
+        # absolute panel to float over map
+        absolutePanel(width = '30vw', 
+                      bottom = 10, 
+                      right = 20,
+                      height = "40vh",
+                      material_card(id = "t", title = "Most Valuable Parks", depth = 3,divider = T, 
+                                    plotOutput("valueParks", width = '100%', height = "20vh"))
+                      ) # end absolute panel
+        
 )
