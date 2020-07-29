@@ -7,9 +7,9 @@ server <- function(input, output, session) {
     
     # update UI element
     output$map <- renderLeaflet(leaf_map())
-    
+
     # add polygons to map
-    addLeafPolys("map")
+    addLeafPolys("map", park, neigh)
 
     # get subset of neighborhood
     # sub_neigh <- reactive({
@@ -62,23 +62,13 @@ observe({
     }
 })
 
-    # Load Spatial Data with Promise-------------------------------------------------------
-    
-    # load park trees with future
-    # plan(multiprocess)
-    # pt <- reactive({
-    #     future(
-    #         read_sf("dat/data.gpkg", layer = "park_trees")
-    #     )
-    # })
-    
-    # observe more button on map
-    # observeEvent(input$`map-change`, {
-    #     toggleClass("map-wrapper", "change-map")
-    #     toggleCssClass("hidden-panel", "hidden")
-    #     #toggle(id = "hidden-panel", anim = T, animType = "fade", time = .5)
-    #     }
-    # )
-    
-    
+# change drop down inputs
+vals <- reactive({
+    grep(input$`park-search`, x = park_names, ignore.case = T, value = T)
+})
+
+observe({
+    update_material_dropdown(session = session, input_id = "parks", choices = vals(), value = vals()[1])
+})
+
 } # end of server

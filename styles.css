@@ -28,3 +28,7 @@ body {
 .card-title {
   font-size: 20px;
 }
+
+.row {
+  padding: 20px;
+}

@@ -20,7 +20,7 @@ leaf_map <- reactive({
 
 
 # add parks after basemap loads
-addLeafPolys <- function(map) {
+addLeafPolys <- function(map, park, neigh) {
   leafletProxy(map) %>% 
     addPolygons(data = park, 
                 popup = paste0(park$NAME, "<br>Acres: ", round(park$ACRES, 1), "<br>", material_button(input_id = "pop-btn", label = "Show Trees", depth = 3)),

@@ -1,3 +1,12 @@
+library(leaflet)
+library(shiny)
+library(sf)
+library(shinyjs)
+library(future)
+library(promises)
+library(shinyWidgets)
+library(shinymaterial)
+
 #plan(multiprocess)
 # global variables to use in tree map app
 
@@ -13,6 +22,9 @@ neigh_names <- neigh$MAPLABEL
 portland <- invisible(st_read("dat/data.gpkg", layer = "portland", quiet = T))
 
 # park trees
-park_trees <-future(then(invisible(st_read("dat/data.gpkg", layer = "park_trees", quiet = T)))) 
+# park_trees <- future(st_read("dat/data.gpkg", layer = "park_trees", quiet = T))
+park_trees <- st_read("dat/data.gpkg", layer = "park_trees", quiet = T)
+
+
 
 # st_layers("dat/data.gpkg")
