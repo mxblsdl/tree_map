@@ -1,0 +1,86 @@
+---
+title: "Tree App Test"
+output: html_notebook
+---
+
+
+```{r}
+library(leaflet)
+library(leaflet.providers)
+library(sf)
+library(promises)
+library(future)
+library(dplyr)
+```
+
+
+```{r}
+# read in parks
+park <-invisible(st_read("dat/data.gpkg", layer = "park", quiet = T))    
+park_names <- park$NAME
+park_names <- c("Please Select Park", sort(park_names))
+
+# read in neighborhoods
+neigh <- invisible(st_read("dat/data.gpkg", layer = "neigh", quiet = T))
+neigh_names <- neigh$MAPLABEL
+
+# City Boundary
+portland <- invisible(st_read("dat/data.gpkg", layer = "portland", quiet = T))
+
+# park trees
+# park_trees <- future(st_read("dat/data.gpkg", layer = "park_trees", quiet = T))
+# park_trees <- st_read("dat/data.gpkg", layer = "park_trees", quiet = T)
+
+park_trees <- value(future(st_read("dat/data.gpkg", layer = "park_trees", quiet = T)))
+```
+
+
+
+```{r}
+l <- leaflet() %>% 
+  addTiles() %>% 
+    addPolygons(data = park, 
+                popup = paste0(park$NAME, 
+                               "<br>Acres: ",
+                               round(park$ACRES, 1)#,
+                               #"<br>",
+                               # actionButton("t", "test btn", onclick = "
+                               #              parent = document.getElementById('t');
+                               #              name = parent.parentElement.innerHTML;
+                               #              park = name.split('<br>')[0];
+                               #              parent.value = park;
+                               #              ")
+                               ),
+                
+                options = popupOptions(className = "popup", 
+                                       autoPan = T),
+                color = "#548B54",
+                group = "Parks") %>% 
+    addPolygons(data = neigh,
+                popup = paste0(neigh$MAPLABEL),
+                options = popupOptions(className = "popup", 
+                                       autoPan = T),
+                color = "#ffffff",
+                weight = 3,
+                fillOpacity = .1,
+#                highlightOptions = T,
+              #  stroke = T,
+                opacity = .6,
+                fillColor = "red",
+                group = "Neighborhoods") %>% 
+    addLayersControl(
+      overlayGroups = c("Parks", "Neighborhoods"), 
+      position = "topright",
+      options = layersControlOptions(collapsed = T)
+    ) %>% 
+    hideGroup(c("Neighborhoods"))
+
+park_trees %>% 
+  filter()
+
+park_trees
+l %>% 
+  addMarkers(data = park_trees, clusterOptions = markerClusterOptions())
+  
+```
+
