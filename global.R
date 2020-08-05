@@ -31,10 +31,31 @@ park_trees <- value(future(st_read("dat/data.gpkg", layer = "park_trees", quiet 
 # Check layers in a geopackage database
 # st_layers("dat/data.gpkg")
 # 
-headerButtons <- function(id) {
-tagList(
-  material_button(NS(id, "tree"), label = "", depth = 1, icon = icon("tree"))
+headerButtons <- function(id, icon) {
+  ns <- NS(id)
+  tagList(
+    material_button(NS(id, "tree"), label = "", depth = 1, icon = icon(icon))
   )
 }
-# 
-# 
+
+headerButtonsui <- function(id, icon){
+  ns <- NS(id)
+  tagList(
+    material_button(NS(id, "tree"), label = "", depth = 1, icon = icon(icon))
+    )
+  }
+
+# headerButtons <- function(input, output, session){
+#   ns <- session$ns
+#   
+# }
+headerButtons <- function(id) {
+  moduleServer(id, function(input, output, session) {
+    
+  })
+}
+# Copy in UI
+#headerButtonsui("headerButtonsui")
+
+# Copy in server
+#callModule(headerButtons, "headerButtonsui")

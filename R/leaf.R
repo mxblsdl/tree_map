@@ -5,7 +5,8 @@ leaf_map <- reactive({
     htmlwidgets::onRender("function(el, x) {
                           L.control.zoom({position: 'topright'}).addTo(this)
                           }") %>% 
-    addProviderTiles(providers$CartoDB.Positron) %>%
+    addProviderTiles(providers$CartoDB.Positron, group = "Default") %>%
+    addProviderTiles(providers$Esri.WorldImagery, group = "Satellite") %>% 
     setView(lng = -122.63,
             lat = 45.54,
             zoom = 12) %>%
@@ -14,7 +15,7 @@ leaf_map <- reactive({
                  lng2 = -122.8,
                  lat2 = 45.67
     ) %>%
-    leafem::addMouseCoordinates() #%>% 
+    leafem::addMouseCoordinates()# %>%
     #addControl(actionButton("map-change", label = "", icon = icon("bars"), class = "leaf-extend"), position = "topleft")
 })
 
@@ -23,7 +24,18 @@ leaf_map <- reactive({
 addLeafPolys <- function(map, park, neigh) {
   leafletProxy(map) %>% 
     addPolygons(data = park, 
-                popup = paste0(park$NAME, "<br>Acres: ", round(park$ACRES, 1), "<br>", material_button(input_id = "pop-btn", label = "Show Trees", depth = 3)),
+                popup = paste0(park$NAME, 
+                               "<br>Acres: ",
+                               round(park$ACRES, 1)#,
+                               #"<br>",
+                               # actionButton("t", "test btn", onclick = "
+                               #              parent = document.getElementById('t');
+                               #              name = parent.parentElement.innerHTML;
+                               #              park = name.split('<br>')[0];
+                               #              parent.value = park;
+                               #              ")
+                               ),
+                
                 options = popupOptions(className = "popup", 
                                        autoPan = T),
                 color = "#548B54",
@@ -33,7 +45,7 @@ addLeafPolys <- function(map, park, neigh) {
                 options = popupOptions(className = "popup", 
                                        autoPan = T),
                 color = "#ffffff",
-                weight = 5,
+                weight = 3,
                 fillOpacity = .1,
 #                highlightOptions = T,
               #  stroke = T,
@@ -45,5 +57,5 @@ addLeafPolys <- function(map, park, neigh) {
       position = "topright",
       options = layersControlOptions(collapsed = T)
     ) %>% 
-    hideGroup("Neighborhoods")
+    hideGroup(c("Neighborhoods"))
 }

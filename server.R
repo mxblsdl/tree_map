@@ -1,7 +1,4 @@
 
-
-
-
 # Define server logic required to draw a histogram
 server <- function(input, output, session) {
     
@@ -11,14 +8,24 @@ server <- function(input, output, session) {
     # add polygons to map
     addLeafPolys("map", park, neigh)
 
-    # get subset of neighborhood
-    # sub_neigh <- reactive({
-    #     subset(neigh, subset = NAME == input$neigh)
-    # })
-    
+    # add park trees lazy...
+    # TODO make lazy
+    leafletProxy('map') %>%  
+        addMarkers(data = park_trees,
+                   clusterOptions = markerClusterOptions(maxClusterRadius = 40, 
+                                                         disableClusteringAtZoom = 18,
+                                                         spiderfyOnMaxZoom = F),
+                   group = "Trees") %>%
+        addLayersControl(
+            overlayGroups = c("Parks", "Neighborhoods", "Trees"), 
+            position = "topright",
+            options = layersControlOptions(collapsed = T),
+            baseGroups = c("Default", "Satellite")
+        ) %>% 
+        hideGroup(c("Neighborhoods", "Trees"))
+
     # call event on button press
 
-    
     # fly to neighborhoods
     observeEvent(input$flyNeigh, {
         # get subset of neighborhood
@@ -44,25 +51,16 @@ server <- function(input, output, session) {
         flyFunc("map", portland)
     })
     
+    # hide and show fly to buttons    
+    observe({
+            if(input$parks == "Please Select Park") hide("flyPark") else show("flyPark")
+    })
 
-# hide and show fly to buttons    
-observe({
-        if(input$parks == "Please Select Park") {
-            hide("flyPark")
-        } else {
-            show("flyPark")
-        }
-})
+    observe({
+        if(input$neigh == "Please Select Neighborhood") hide("flyNeigh") else show("flyNeigh")
+    })
 
-observe({
-    if(input$neigh == "Please Select Neighborhood") {
-        hide("flyNeigh")
-    } else {
-        show("flyNeigh")
-    }
-})
-
-# change drop down inputs
+# change park dropdown inputs
 vals <- reactive({
     grep(input$`park-search`, x = park_names, ignore.case = T, value = T)
 })
@@ -70,5 +68,18 @@ vals <- reactive({
 observe({
     update_material_dropdown(session = session, input_id = "parks", choices = vals(), value = vals()[1])
 })
+
+# Park Trees Filter -------------------------------------------------------
+
+onclick("t", 
+    print(input$t),
+#    addClass("t", "with-gap")
+)
+
+
+# runjs("document.getElementById('popbtn').onclick = function() { 
+#            console.log(this);
+#          };"
+#       )
 
 } # end of server
