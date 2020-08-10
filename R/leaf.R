@@ -23,19 +23,11 @@ leaf_map <- reactive({
 # add parks after basemap loads
 addLeafPolys <- function(map, park, neigh) {
   leafletProxy(map) %>% 
-    addPolygons(data = park, 
+    addPolygons(data = park,
                 popup = paste0(park$NAME, 
                                "<br>Acres: ",
-                               round(park$ACRES, 1)#,
-                               #"<br>",
-                               # actionButton("t", "test btn", onclick = "
-                               #              parent = document.getElementById('t');
-                               #              name = parent.parentElement.innerHTML;
-                               #              park = name.split('<br>')[0];
-                               #              parent.value = park;
-                               #              ")
+                               round(park$ACRES, 1)
                                ),
-                
                 options = popupOptions(className = "popup", 
                                        autoPan = T),
                 color = "#548B54",

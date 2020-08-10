@@ -8,6 +8,10 @@ body {
   opacity: 0.9;
 }
 
+nav .brand-logo {
+  position: relative;
+}
+
 .leaf-extend {
   padding: 4px;
 }

@@ -1,7 +1,7 @@
 
 # Define server logic required to draw a histogram
 server <- function(input, output, session) {
-    
+  
     # update UI element
     output$map <- renderLeaflet(leaf_map())
 
@@ -14,7 +14,9 @@ server <- function(input, output, session) {
         addMarkers(data = park_trees,
                    clusterOptions = markerClusterOptions(maxClusterRadius = 40, 
                                                          disableClusteringAtZoom = 18,
-                                                         spiderfyOnMaxZoom = F),
+                                                         spiderfyOnMaxZoom = F, 
+                                                         removeOutsideVisibleBounds = T),
+                   options =list(chunkedLoading = T),     
                    group = "Trees") %>%
         addLayersControl(
             overlayGroups = c("Parks", "Neighborhoods", "Trees"), 
@@ -71,15 +73,37 @@ observe({
 
 # Park Trees Filter -------------------------------------------------------
 
-onclick("t", 
-    print(input$t),
-#    addClass("t", "with-gap")
-)
+observeEvent( input$`value-switch` , {
+    if(input$`value-switch`) {enable("value")}
+    else {disable("value")}
+})
+
+# change leaflet map color
+pal <- colorFactor(palette = 'YlOrRd', domain = park$type)
+
+park_val <- reactive(input$value)
+
+observeEvent(input$`value-switch`, {
+    if(input$`value-switch`) {
+        enable("value")
+
+            leafletProxy("map") %>%
+            leaflet::clearGroup("Parks") %>% 
+            addPolygons(data = park,
+                        popup = paste0(park$NAME, 
+                                       "<br>Acres: ",
+                                       round(park$ACRES, 1)
+                        ),
+                        options = popupOptions(className = "popup", 
+                                               autoPan = T),
+                        color = ~pal(),
+                        group = "Parks")
+        }
+    else {
+        (disable("value"))
+        }
+}, ignoreInit = T)
 
 
-# runjs("document.getElementById('popbtn').onclick = function() { 
-#            console.log(this);
-#          };"
-#       )
 
 } # end of server

@@ -84,3 +84,86 @@ l %>%
   
 ```
 
+
+
+```{r}
+options(shiny.autoreload = T)
+ui <- 
+  material_depth(
+    depth = 2,
+    material_row(
+      id = "treecontrols",
+      title = "",
+      class = "center",
+      material_column(
+        width = 4,
+        offset = 2,
+        switchInput(
+          inputId = "edible-switch",
+          "",
+          value = F,
+          inline = T,
+          size = 'mini', 
+          onStatus = "success"
+        ),
+        disabled(
+          radioButtons(
+            "edible",
+            label = "Edible Trees",
+            choices = c("Fruit", "Nut"),
+            inline = T
+          )
+        )
+      ),
+      material_column(
+        width = 4,
+        switchInput(
+          "value-switch",
+          "",
+          value = T,
+          inline = T,
+          size = 'mini',
+          onStatus = "success"
+        ),
+        radioButtons(
+          "value",
+          label = "Tree Value",
+          choices = c("Total", "Per Acre"),
+          inline = T
+        ),
+                bsTooltip(id = "edible", title = "Edible trees", 
+                  trigger = "hover",
+                  placement = "left"),
+      )
+    )
+  )
+
+server <- function(input, output, session) {
+  addTooltip(session, id = "edible", title = "This is an input.",
+           placement = "left", trigger = "hover")
+}
+
+shinyApp(ui, server)
+```
+```{r}
+library(RColorBrewer)
+# change leaflet map color
+pal <- colorFactor(palette = 'YlOrRd', domain = park$type)
+
+RColorBrewer::display.brewer.all()
+
+        leaflet() %>%
+            #leaflet::clearGroup("Parks") %>% 
+            addPolygons(data = park,
+                        popup = paste0(park$NAME, 
+                                       "<br>Acres: ",
+                                       round(park$ACRES, 1)
+                        ),
+                        options = popupOptions(className = "popup", 
+                                               autoPan = T),
+                        color = ~pal(val),
+                        group = "Parks")
+          } %>% 
+  addLegend("bottomleft", pal = )
+```
+

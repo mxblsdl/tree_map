@@ -9,7 +9,7 @@ ui <-
             tags$style(includeCSS("styles.css")),
             useShinyjs()
         ),
-        title = "Portland Urban Forestry",
+        title = "Portland Urban Forestry", include_nav_bar = T,
 
 # Side Bar ----------------------------------------------------------------
 
@@ -49,18 +49,26 @@ ui <-
 
 # Header Controls ---------------------------------------------------------
 
-    material_depth(depth = 1,
-    material_row(id = "treecontrols", title = "",
-                     material_column(offset = 3,
-                         switchInput(inputId = "edible-switch", "", value = F, inline = F),
-                         disabled(radioButtons("edible", label = "Edible Trees", choices = c("Fruit", "Nut"), inline = T))
+    material_depth(depth = 2,
+    material_row(id = "treecontrols", title = "", class = "center",
+                     material_column(width = 4, offset = 2,
+                         switchInput(inputId = "edible-switch", "", value = F, inline = T, onStatus = "success", size = 'mini'),
+                         disabled(radioButtons("edible", label = "Edible Trees",
+                                               choices = c("Fruit", "Nut"),
+                                               inline = T))
                      ),
-                    material_column(
-                        switchInput("value-switch", "", value = T, inline = T, onStatus = "success"),
-                        radioButtons("value", label = "Tree Value", choices = c("Total", "Per Acre"), inline = T)
+                 bsTooltip(id = "treecontrols", title = "Edible trees", trigger = "click",
+                           placement = "right", options = list(container = "body")),
+                    material_column(width = 4,
+                        switchInput("value-switch", "", value = F, inline = T, size = 'mini', onStatus = "success"),
+                        disabled(radioButtons("value", label = "Tree Value",
+                                              choiceNames = c("Total", "Per Acre"),
+                                              choiceValues = c("val", "val_per_acre"),
+                                              inline = T))
                     )
                 )
     ),
+
 
 # Leaflet Map -------------------------------------------------------------
 # height needs to be set to view window height

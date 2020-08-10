@@ -1,11 +1,15 @@
 library(leaflet)
-library(shiny)
 library(sf)
-library(shinyjs)
-library(future)
-library(promises)
+
+library(shiny)
 library(shinyWidgets)
 library(shinymaterial)
+library(shinyjs)
+library(shinyBS)
+
+library(future)
+library(promises)
+
 
 #plan(multiprocess)
 # global variables to use in tree map app
