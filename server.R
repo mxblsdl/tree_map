@@ -79,14 +79,16 @@ observeEvent( input$`value-switch` , {
 })
 
 # change leaflet map color
-pal <- colorFactor(palette = 'YlOrRd', domain = park$type)
-
-park_val <- reactive(input$value)
-
 observeEvent(input$`value-switch`, {
     if(input$`value-switch`) {
         enable("value")
-
+      
+      # TODO add legend
+      # TODO fix logic so fires on button change
+      # Disable does to simple park outlines
+      park_val <- input$value
+      pal <- colorNumeric(palette = 'YlOrRd', domain = park[[park_val]])
+      
             leafletProxy("map") %>%
             leaflet::clearGroup("Parks") %>% 
             addPolygons(data = park,
@@ -96,7 +98,7 @@ observeEvent(input$`value-switch`, {
                         ),
                         options = popupOptions(className = "popup", 
                                                autoPan = T),
-                        color = ~pal(),
+                        color = ~pal(get(park_val)),
                         group = "Parks")
         }
     else {

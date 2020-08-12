@@ -1,0 +1,16 @@
+
+
+colorBy <- input$varinput
+
+pal <- colorNumeric(
+        palette = "Blues",
+        domain = c(min(map_data[[colorBy]], map_data_gen[[colorBy]]),
+                   max(map_data[[colorBy]], map_data_gen[[colorBy]]))
+      )
+
+      addPolygons(stroke = TRUE, opacity = 1, weight = 0.7,
+                  smoothFactor = 0.1, color = "gainsboro",
+                  fillOpacity = 0.7,
+                  fillColor = ~pal(get(colorBy)),
+                  popup = popup
+      )
